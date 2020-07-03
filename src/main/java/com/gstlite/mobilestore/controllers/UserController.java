@@ -42,13 +42,35 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public Users create(@Validated @RequestBody Users user){
+    public Users create(@Validated @RequestBody Users user) throws Exception{
+        String userEmail = user.getEmail();
+        if(userEmail!=null&&!"".equals(userEmail)){
+            Users tempUser = userRepository.findByEmail(userEmail);
+            if(tempUser!=null){
+                throw new Exception("user "+userEmail+" is already exist");
+            }
+        }
         return userRepository.save(user);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Users> update(@PathVariable(value = "id") Long userId,
                                        @Validated @RequestBody Users userDetails) throws ResourceNotFoundException{
+
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found on:" + userId));
+
+        user.setFullname(userDetails.getFullname());
+        user.setEmail(userDetails.getEmail());
+        user.setPassword(userDetails.getPassword());
+        final Users updateUser = userRepository.save(user);
+
+        return ResponseEntity.ok(updateUser);
+    }
+
+    @PutMapping("/change-password/{id}")
+    public ResponseEntity<Users> changePassword(@PathVariable(value = "id") Long userId,
+                                        @Validated @RequestBody Users userDetails) throws ResourceNotFoundException{
 
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found on:" + userId));
