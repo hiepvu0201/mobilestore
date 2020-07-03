@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.catalina.User;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -31,8 +33,9 @@ public class Product {
     @Column(name = "unit_in_stock", nullable = false, columnDefinition="Decimal(19,4)")
     private double unitInStock;
 
+    @CreationTimestamp
     @Column(name = "created_at")
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
     @Lob
     @Column(name = "description" )
@@ -52,6 +55,6 @@ public class Product {
     @JoinColumn(name = "user_id")
     private Users userId;
 
-    @Column(name = "is_disabled", nullable = false)
+    @Column(name = "is_disabled", columnDefinition = "boolean default false")
     private boolean isDisabled;
 }

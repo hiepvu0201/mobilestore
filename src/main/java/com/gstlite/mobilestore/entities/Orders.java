@@ -45,5 +45,7 @@ public class Orders {
     @Column(name = "type", nullable = false, columnDefinition="Decimal(19,4)")
     private String type;
 
+    @Column(name = "is_disabled", columnDefinition = "boolean default false")
+    private boolean isDisabled;
 
 }

@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -27,8 +29,9 @@ public class ProductGroup {
     @Column(name = "price", nullable = false, columnDefinition="Decimal(19,4)")
     private double price;
 
+    @CreationTimestamp
     @Column(name = "created_at")
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "is_disabled", nullable = false)
     private boolean isDisabled;

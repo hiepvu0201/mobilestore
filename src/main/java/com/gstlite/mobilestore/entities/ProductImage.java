@@ -28,6 +28,6 @@ public class ProductImage {
     @JoinColumn(name = "prouct_id")
     private Product productId;
 
-    @Column(name = "is_disabled", nullable = false)
+    @Column(name = "is_disabled", columnDefinition = "boolean default false")
     private boolean isDisabled;
 }

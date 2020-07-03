@@ -1,10 +1,12 @@
 package com.gstlite.mobilestore.entities;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlInlineBinaryData;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -22,8 +24,6 @@ public class Users {
     @Column(name = "full_name", nullable = false)
     private String fullname;
 
-    @Getter
-    @Setter
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
@@ -33,9 +33,10 @@ public class Users {
     @Column(name = "role", nullable = false)
     private String role;
 
+    @CreationTimestamp
     @Column(name = "created_at")
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
-    @Column(name = "is_disabled", nullable = false)
+    @Column(name = "is_disabled", columnDefinition = "boolean default false")
     private boolean isDisabled;
 }

@@ -27,6 +27,6 @@ public class GroupVariant {
     @JoinColumn(name = "product_group_id")
     private ProductGroup productGroupId;
 
-    @Column(name = "is_disabled", nullable = false)
+    @Column(name = "is_disabled", columnDefinition = "boolean default false")
     private boolean isDisabled;
 }
