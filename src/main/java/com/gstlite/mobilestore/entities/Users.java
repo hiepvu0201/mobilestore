@@ -1,9 +1,6 @@
 package com.gstlite.mobilestore.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlInlineBinaryData;
@@ -25,6 +22,8 @@ public class Users {
     @Column(name = "full_name", nullable = false)
     private String fullname;
 
+    @Getter
+    @Setter
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
