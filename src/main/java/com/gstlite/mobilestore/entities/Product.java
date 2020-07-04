@@ -45,7 +45,7 @@ public class Product {
     private String manufacturer;
 
     @Column(name = "product_condition", nullable = false)
-    private String product_condition;
+    private String productCondition;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_group_id")
