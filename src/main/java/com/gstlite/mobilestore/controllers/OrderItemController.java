@@ -33,7 +33,6 @@ public class OrderItemController {
 
     @GetMapping("/list")
     public List<OrderItem> getAllOrderItem() {
-
         return orderItemRepository.findAll();
     }
 
@@ -66,7 +65,6 @@ public class OrderItemController {
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id " + orderItem.getOrderId())));
 
         final OrderItem updateOrderItem = orderItemRepository.save(orderItem);
-
         return ResponseEntity.ok(updateOrderItem);
     }
 
