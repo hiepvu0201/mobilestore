@@ -42,7 +42,7 @@ public class Orders {
     @Column(name = "total_price", nullable = false, columnDefinition="Decimal(19,4)")
     private double totalPrice;
 
-    @Column(name = "type", nullable = false, columnDefinition="Decimal(19,4)")
+    @Column(name = "type", nullable = false)
     private String type;
 
     @Column(name = "is_disabled", columnDefinition = "boolean default false")

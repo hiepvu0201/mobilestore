@@ -71,7 +71,7 @@ public class UserController {
         return ResponseEntity.ok(updateUser);
     }
 
-    @PutMapping("/change-email/{id}")
+    @PutMapping("/update-email/{id}")
     public ResponseEntity<Users> changePassword(@PathVariable(value = "id") Long userId,
                                                 @Validated @RequestBody Users userDetails) throws ResourceNotFoundException, Exception{
 

@@ -74,8 +74,10 @@ public class ProductController {
         product.setDescription(productDetails.getDescription());
         product.setManufacturer(productDetails.getManufacturer());
         product.setProductCondition(productDetails.getProductCondition());
-        product.setProductGroupId(productDetails.getProductGroupId());
-        product.setUserId(productDetails.getUserId());
+        product.setProductGroup(productGroupRepository.findById(product.getProductGroupId())
+                .orElseThrow(() -> new ResourceNotFoundException("Product Group not found with id " + product.getProductGroupId())));
+        product.setUsers(userRepository.findById(product.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + product.getUserId())));
         final Product updateProduct = productRepository.save(product);
 
         return ResponseEntity.ok(updateProduct);
