@@ -1,5 +1,6 @@
 package com.gstlite.mobilestore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,15 +24,27 @@ public class OrderItem {
     @Column(name = "price", nullable = false, columnDefinition="Decimal(19,4)")
     private double price;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product productId;
+    @Column(name = "product_id", nullable = false)
+    private long productId;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_variant_id")
-    private GroupVariant groupVariantId;
+    @JoinColumn(name = "product")
+    private Product product;
 
+    @Column(name = "group_variant_id", nullable = false)
+    private long groupVariantId;
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_variant")
+    private GroupVariant groupVariant;
+
+    @Column(name = "order_id", nullable = false)
+    private long orderId;
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Orders orderId;
+    @JoinColumn(name = "orders")
+    private Orders orders;
 }

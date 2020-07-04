@@ -1,5 +1,6 @@
 package com.gstlite.mobilestore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,9 +25,13 @@ public class ProductImage {
     @Column(name = "pic_byte", nullable = false, columnDefinition="BLOB")
     private byte[] picByte;
 
+    @Column(name = "product_id", nullable = false)
+    public long productId;
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "prouct_id")
-    private Product productId;
+    @JoinColumn(name = "product")
+    private Product product;
 
     @Column(name = "is_disabled", columnDefinition = "boolean default false")
     private boolean isDisabled;

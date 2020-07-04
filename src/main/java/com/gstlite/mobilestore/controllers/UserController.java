@@ -1,5 +1,6 @@
 package com.gstlite.mobilestore.controllers;
 
+import com.gstlite.mobilestore.entities.Product;
 import com.gstlite.mobilestore.entities.Users;
 import com.gstlite.mobilestore.exceptions.ResourceNotFoundException;
 import com.gstlite.mobilestore.repositories.UserRepository;
@@ -64,16 +65,15 @@ public class UserController {
             throw new Exception("user has already been disabled!");
         }
         user.setFullname(userDetails.getFullname());
-        user.setEmail(userDetails.getEmail());
         user.setPassword(userDetails.getPassword());
         final Users updateUser = userRepository.save(user);
 
         return ResponseEntity.ok(updateUser);
     }
 
-    @PutMapping("/change-password/{id}")
+    @PutMapping("/change-email/{id}")
     public ResponseEntity<Users> changePassword(@PathVariable(value = "id") Long userId,
-                                        @Validated @RequestBody Users userDetails) throws ResourceNotFoundException, Exception{
+                                                @Validated @RequestBody Users userDetails) throws ResourceNotFoundException, Exception{
 
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found on:" + userId));
@@ -82,7 +82,13 @@ public class UserController {
         if(isdisable==true){
             throw new Exception("user has already been disabled!");
         }
-        user.setPassword(userDetails.getPassword());
+
+        Users tempEmail = userRepository.findByEmail(userDetails.getEmail());
+        if(tempEmail!=null){
+            throw new Exception("Email "+tempEmail+" is already exist");
+        }
+
+        user.setEmail(userDetails.getEmail());
         final Users updateUser = userRepository.save(user);
 
         return ResponseEntity.ok(updateUser);

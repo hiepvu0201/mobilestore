@@ -1,5 +1,6 @@
 package com.gstlite.mobilestore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,13 +48,21 @@ public class Product {
     @Column(name = "product_condition", nullable = false)
     private String productCondition;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_group_id")
-    private ProductGroup productGroupId;
+    @Column(name = "product_group_id", nullable = false)
+    public long productGroupId;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Users userId;
+    @JoinColumn(name = "product_group")
+    private ProductGroup productGroup;
+
+    @Column(name = "user_id", nullable = false)
+    public long userId;
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users")
+    private Users users;
 
     @Column(name = "is_disabled", columnDefinition = "boolean default false")
     private boolean isDisabled;

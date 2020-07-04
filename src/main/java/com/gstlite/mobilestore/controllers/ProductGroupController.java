@@ -1,6 +1,7 @@
 package com.gstlite.mobilestore.controllers;
 
 import com.gstlite.mobilestore.entities.ProductGroup;
+import com.gstlite.mobilestore.entities.Users;
 import com.gstlite.mobilestore.exceptions.ResourceNotFoundException;
 import com.gstlite.mobilestore.repositories.ProductGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +56,30 @@ public class ProductGroupController {
         if(isdisable==true){
             throw new Exception("Product Group has already been disabled!");
         }
-        productGroup.setGroupName(productGroupDetails.getGroupName());
         productGroup.setPrice(productGroupDetails.getPrice());
+        final ProductGroup updateProductGroup = productGroupRepository.save(productGroup);
+
+        return ResponseEntity.ok(updateProductGroup);
+    }
+
+    @PutMapping("/update-name/{id}")
+    public ResponseEntity<ProductGroup> updateName(@PathVariable(value = "id") Long productGroupId,
+                                               @Validated @RequestBody ProductGroup productGroupDetails) throws ResourceNotFoundException, Exception{
+
+        ProductGroup productGroup = productGroupRepository.findById(productGroupId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product Group not found on:" + productGroupId));
+
+        boolean isdisable = productGroup.isDisabled();
+        if(isdisable==true){
+            throw new Exception("Product Group has already been disabled!");
+        }
+
+        ProductGroup tempProductGroup = productGroupRepository.findByGroupName(productGroupDetails.getGroupName());
+        if(tempProductGroup!=null){
+            throw new Exception("Product Group "+tempProductGroup+" is already exist");
+        }
+
+        productGroup.setGroupName(productGroupDetails.getGroupName());
         final ProductGroup updateProductGroup = productGroupRepository.save(productGroup);
 
         return ResponseEntity.ok(updateProductGroup);
