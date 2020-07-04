@@ -16,9 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -29,6 +27,7 @@ public class UserController {
 
     @GetMapping("/list")
     public List<Users> getAllUsers() {
+
         return userRepository.findAll();
     }
 
@@ -55,11 +54,15 @@ public class UserController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Users> update(@PathVariable(value = "id") Long userId,
-                                       @Validated @RequestBody Users userDetails) throws ResourceNotFoundException{
+                                       @Validated @RequestBody Users userDetails) throws ResourceNotFoundException, Exception{
 
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found on:" + userId));
 
+        boolean isdisable = user.isDisabled();
+        if(isdisable==true){
+            throw new Exception("user has already been disabled!");
+        }
         user.setFullname(userDetails.getFullname());
         user.setEmail(userDetails.getEmail());
         user.setPassword(userDetails.getPassword());
@@ -70,33 +73,62 @@ public class UserController {
 
     @PutMapping("/change-password/{id}")
     public ResponseEntity<Users> changePassword(@PathVariable(value = "id") Long userId,
-                                        @Validated @RequestBody Users userDetails) throws ResourceNotFoundException{
+                                        @Validated @RequestBody Users userDetails) throws ResourceNotFoundException, Exception{
 
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found on:" + userId));
 
-
+        boolean isdisable = user.isDisabled();
+        if(isdisable==true){
+            throw new Exception("user has already been disabled!");
+        }
         user.setPassword(userDetails.getPassword());
         final Users updateUser = userRepository.save(user);
 
         return ResponseEntity.ok(updateUser);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public Map<String, Boolean> delete(@PathVariable(value = "id") Long userId) throws Exception{
-        Users user = userRepository.findById(userId).orElseThrow(()->new ResourceNotFoundException("User not found on:"+userId));
+    @PutMapping("/disable/{id}")
+    public ResponseEntity<Users> disable(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException, Exception{
 
-        userRepository.delete(user);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("deleted", Boolean.TRUE);
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found on:" + userId));
 
-        return response;
+        boolean isdisable = user.isDisabled();
+        if(isdisable==true)
+        {
+            throw new Exception("user has already been disabled!");
+        }
+        user.setDisabled(true);
+        final Users updateUser = userRepository.save(user);
+
+        return ResponseEntity.ok(updateUser);
+    }
+
+    @PutMapping("/enable/{id}")
+    public ResponseEntity<Users> enable(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException, Exception{
+
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found on:" + userId));
+
+        boolean isdisable = user.isDisabled();
+        if(isdisable==false)
+        {
+            throw new Exception("user has not been disabled yet!");
+        }
+        user.setDisabled(false);
+        final Users updateUser = userRepository.save(user);
+
+        return ResponseEntity.ok(updateUser);
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<Users> signIn(@Validated @RequestBody Users u){
+    public ResponseEntity<Users> signIn(@Validated @RequestBody Users u) throws Exception{
         Users user = userRepository.findByEmailAndPassword(u.getEmail(), u.getPassword());
-
+        boolean isdisable = user.isDisabled();
+        if(isdisable==true){
+            throw new Exception("Log in fail! This user has already been disabled!");
+        }
         if(user==null){
             return ResponseEntity.ok(null);
         }
