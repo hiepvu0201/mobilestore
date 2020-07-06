@@ -22,10 +22,10 @@ public class ProductImage {
     private long id;
 
     @Lob
-    @Column(name = "pic_byte", nullable = false, columnDefinition="BLOB")
+    @Column(name = "pic_byte", nullable = true, columnDefinition="BLOB")
     private byte[] picByte;
 
-    @Column(name = "product_id", nullable = false)
+    @Column(name = "product_id", nullable = true)
     public long productId;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -35,4 +35,11 @@ public class ProductImage {
 
     @Column(name = "is_disabled", columnDefinition = "boolean default false")
     private boolean isDisabled;
+
+    public ProductImage(byte[] picByte, long productId, Product product){
+        this.picByte = picByte;
+        this.productId = productId;
+        this.product = product;
+    }
 }
+uk

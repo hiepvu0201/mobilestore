@@ -12,8 +12,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -21,7 +23,7 @@ import java.util.zip.Inflater;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/v1/image")
+@RequestMapping("/api/v1/productimage")
 public class ProductImageController {
 
     @Autowired
@@ -30,71 +32,58 @@ public class ProductImageController {
     @Autowired
     private ProductRepository productRepository;
 
-    // compress the image bytes before storing it in the database
-    public static byte[] compressBytes(byte[] data) {
-        Deflater deflater = new Deflater();
-        deflater.setInput(data);
-        deflater.finish();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-        byte[] buffer = new byte[1024];
-        while (!deflater.finished()) {
-            int count = deflater.deflate(buffer);
-            outputStream.write(buffer, 0, count);
+
+
+    @PostMapping("/upload")
+    public ProductImage uploadImage(@RequestParam("myFile") MultipartFile file) throws IOException {
+
+        List<Product> lst = productRepository.findAll();
+
+        long id = 0;
+        Product p = new Product();
+        for (Product item: lst)
+        {
+            if(id < item.getId()) {
+                p = item;
+                id = item.getId();
+            }
         }
-        try {
-            outputStream.close();
-        } catch (IOException e) {
-        }
-        System.out.println("Compressed Image Byte Size - " + outputStream.toByteArray().length);
-        return outputStream.toByteArray();
+
+        ProductImage img = new ProductImage(file.getBytes(), id, p);
+
+        final ProductImage savedImage = productImageRepository.save(img);
+
+        System.out.println("Image saved");
+
+        return savedImage;
     }
 
-    @PostMapping("/add")
-    public ProductImage create(@Validated @RequestBody MultipartFile file, ProductImage productImage) throws IOException, ResourceNotFoundException {
-        System.out.println("Original Image Byte Size - " + file.getBytes().length);
-//        ProductImage img = new ProductImage(compressBytes(file.getBytes()), productImage.getProductId());
 
-        productImage.setPicByte(compressBytes(file.getBytes()));
-        productImage.setProduct(productRepository.findById(productImage.getProductId())
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + productImage.getProductId())));
+
+
+
+    @PostMapping("/add")
+    public ProductImage create(@RequestParam("myFile") MultipartFile file, @RequestBody long productId) throws IOException, ResourceNotFoundException {
+
+
+
+        ProductImage productImage = new ProductImage();
+        productImage.setPicByte(file.getBytes());
+        productImage.setProductId(productId);
+        productImage.setProduct(productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id " + productId)));
         return productImageRepository.save(productImage);
     }
 
-    // uncompress the image bytes before returning it to the angular application
-    public static byte[] decompressBytes(byte[] data) {
-        Inflater inflater = new Inflater();
-        inflater.setInput(data);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-        byte[] buffer = new byte[1024];
-        try {
-            while (!inflater.finished()) {
-                int count = inflater.inflate(buffer);
-                outputStream.write(buffer, 0, count);
-            }
-            outputStream.close();
-        } catch (IOException ioe) {
-        } catch (DataFormatException e) {
-        }
-        return outputStream.toByteArray();
-    }
-
-//    @GetMapping(path = { "/get/{imageName}" })
-//    public ProductImage getImage(@PathVariable(value = "imageName") Long productId) throws IOException {
-//        ProductImage productImage = productImageRepository.findById(productId);
-//
-//        ProductImage img = new ProductImage(decompressBytes(productImage.getPicByte()), productImage.getProductId(), productImage.getProduct());
-//        return img;
-//    }
-
     @GetMapping("/get/{id}")
-    public ResponseEntity<ProductImage> getProductById(@PathVariable(value = "id") Long productImageId) throws ResourceNotFoundException {
+    public ResponseEntity<ProductImage> getProductImageById(@PathVariable(value = "id") Long productImageId) throws ResourceNotFoundException {
 
-        ProductImage productImage = productImageRepository.findById(productImageId).orElseThrow(()->new ResourceNotFoundException("Product Image not found on:" + productImageId));
+        ProductImage productImage = productImageRepository.findById(productImageId).orElseThrow(()->new ResourceNotFoundException("Product not found on:" + productImageId));
 
-        ProductImage img = new ProductImage(productImage.getId(), decompressBytes(productImage.getPicByte()), productImage.getProductId(), productImage.getProduct(), productImage.isDisabled());
-
-        return ResponseEntity.ok().body(img);
+        return ResponseEntity.ok().body(productImage);
     }
-
-
+    @GetMapping("/list")
+    public List<ProductImage> getAll(){
+        return productImageRepository.findAll();
+    }
 }
