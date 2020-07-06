@@ -1,0 +1,1 @@
+war:deploy ./target/mobilestore-0.0.1-SNAPSHOT.war --app mobilestore-server
