@@ -1,1 +1,1 @@
-war:war -war ./target/mobilestore-0.0.1-SNAPSHOT.war
+war:war -war target/mobilestore-0.0.1-SNAPSHOT.war
