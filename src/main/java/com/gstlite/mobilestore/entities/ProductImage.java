@@ -42,4 +42,3 @@ public class ProductImage {
         this.product = product;
     }
 }
-uk
