@@ -22,7 +22,7 @@ public class ProductImage {
     private long id;
 
     @Lob
-    @Column(name = "pic_byte", nullable = false, columnDefinition="Bytea")
+    @Column(name = "pic_byte", nullable = false, columnDefinition="BLOB")
     private byte[] picByte;
 
     @Column(name = "product_id", nullable = false)
